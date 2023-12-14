@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screen Sharing Example</title>
+  </head>
+  <body>
+    <h1>Screen Sharing Example</h1>
+    <button onclick="startScreenSharing()">Start Screen Sharing</button>
+    <video id="screenVideo" autoplay></video>
+
+    <script>
+      let screenStream;
+
+      function startScreenSharing() {
+        navigator.mediaDevices
+          .getDisplayMedia({ video: true })
+          .then(handleSuccess)
+          .catch(handleError);
+      }
+
+      function handleSuccess(stream) {
+        screenStream = stream;
+        const screenVideo = document.getElementById("screenVideo");
+        screenVideo.srcObject = screenStream;
+      }
+
+      function handleError(error) {
+        console.error("Error accessing screen:", error);
+      }
+    </script>
+  </body>
+</html>

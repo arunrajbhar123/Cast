@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // Ensure the Google Cast API is loaded
+      window["__onGCastApiAvailable"] = function (isAvailable) {
+        if (isAvailable) {
+          initializeCastApi();
+        }
+      };
+
+      // Initialize the Cast API
+      function initializeCastApi() {
+        const sessionRequest = new chrome.cast.SessionRequest(
+          chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID
+        );
+        const apiConfig = new chrome.cast.ApiConfig(
+          sessionRequest,
+          sessionListener,
+          receiverListener
+        );
+
+        chrome.cast.initialize(apiConfig, onInitSuccess, onError);
+      }
+
+      // Handle successful initialization
+      function onInitSuccess() {
+        console.log("Cast API initialized");
+      }
+
+      // Handle errors
+      function onError(error) {
+        console.log("Error during initialization: " + error);
+      }
+
+      // Session listener
+      function sessionListener(session) {
+        console.log("New session ID:" + session.sessionId);
+        currentSession = session;
+      }
+
+      // Receiver listener
+      function receiverListener(availability) {
+        console.log("Receiver status: " + availability);
+      }
+
+      // Start casting a video
+      function castVideo(videoUrl) {
+        const mediaInfo = new chrome.cast.media.MediaInfo(
+          videoUrl,
+          "video/mp4"
+        );
+        const request = new chrome.cast.media.LoadRequest(mediaInfo);
+
+        currentSession.loadMedia(request, onMediaDiscovered, onMediaError);
+      }
+
+      // Handle successful media load
+      function onMediaDiscovered(media) {
+        console.log("Media discovered: " + media.media.contentId);
+      }
+
+      // Handle media load errors
+      function onMediaError(error) {
+        console.log("Error during media loading: " + error);
+      }
+    </script>
+  </body>
+</html>
