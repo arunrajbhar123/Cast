@@ -3,10 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Cast Video</title>
   </head>
   <body>
+    <h1>Cast Video Example</h1>
+
+    <!-- Connect button -->
+    <button onclick="initializeCastApi()">Connect to Device</button>
+
+    <!-- Cast button -->
+    <button onclick="castVideo('http://example.com/sample-video.mp4')">Cast Video</button>
+
     <script>
+      let currentSession;
+
       // Ensure the Google Cast API is loaded
       window["__onGCastApiAvailable"] = function (isAvailable) {
         if (isAvailable) {
@@ -51,6 +61,11 @@
 
       // Start casting a video
       function castVideo(videoUrl) {
+        if (!currentSession) {
+          console.error("No active session. Please initialize a session first.");
+          return;
+        }
+
         const mediaInfo = new chrome.cast.media.MediaInfo(
           videoUrl,
           "video/mp4"
@@ -62,7 +77,7 @@
 
       // Handle successful media load
       function onMediaDiscovered(media) {
-        console.log("Media discovered: " + media.media.contentId);
+        console.log("Media discovered: " + (media.media ? media.media.contentId : "Unknown content ID"));
       }
 
       // Handle media load errors
@@ -70,5 +85,8 @@
         console.log("Error during media loading: " + error);
       }
     </script>
+
+    <!-- Include the Cast SDK script -->
+    <script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
   </body>
 </html>
